@@ -67,7 +67,7 @@ x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
 
-model = RandomForestClassifier()
+model = KNeighborsClassifier()
 #model = MLPClassifier(solver="adam", random_state=1, max_iter=300)
 model.fit(x_train, y_train)
 

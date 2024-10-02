@@ -11,7 +11,7 @@ from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.svm import SVC, LinearSVC
 from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score, classification_report
 from sklearn.neural_network import MLPClassifier
 from scipy.interpolate import interp1d
 
@@ -21,6 +21,10 @@ import numpy as np
 
 train_data = pd.read_csv("FA-detection-dataset/phoenix_train.csv")
 test_data = pd.read_csv("FA-detection-dataset/phoenix_test.csv")
+
+sns.countplot(x='label', data=train_data)
+plt.title("Label(s) in train data")
+plt.show()
 
 target = "label"
 x_train = train_data.drop(target, axis=1)
@@ -66,9 +70,25 @@ scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
+clf = RandomForestClassifier()
 
-model = KNeighborsClassifier()
-#model = MLPClassifier(solver="adam", random_state=1, max_iter=300)
+# param_grid = {
+#     'n_estimators': [45, 50, 100, 200, 500],
+#     'max_depth' : [None, 2,4,5,6,7,8],
+#     'criterion' :['log_loss']
+# }
+#
+# CV_clf = GridSearchCV(estimator=clf, param_grid=param_grid, cv= 5)
+# CV_clf.fit(x_train, y_train)
+#
+# print(CV_clf.best_params_)
+
+
+#model = RandomForestClassifier(n_estimators=45, random_state=0, criterion="entropy", max_depth=None)
+#model = SGDClassifier()
+#model = LogisticRegression()
+model = SVC()
+#model = KNeighborsClassifier()
 model.fit(x_train, y_train)
 
 y_predict = model.predict(x_test)
@@ -83,6 +103,7 @@ print("Precision score: {}".format(precision))
 print("Recall score: {}".format(recall))
 print("F1 score: {}".format(f1))
 print("AUC score: {}".format(auc))
+print(classification_report(y_test, y_predict))
 # for i, j in zip(y_predict, y_test):
 #     print("Prediction: {}. Actual Value: {}".format(i, j))
 
